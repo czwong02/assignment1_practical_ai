@@ -1,23 +1,7 @@
 from flask import Flask, request, jsonify, render_template
-from flask_swagger_ui import get_swaggerui_blueprint
 from analyze import read_image
 
 app = Flask(__name__, template_folder='templates')
-
-SWAGGER_URL = '/apidocs'  # URL for exposing Swagger UI
-API_URL = '/static/swagger.yml'  # URL for the Swagger YAML file
-
-# Create Swagger UI blueprint
-swaggerui_blueprint = get_swaggerui_blueprint(
-    SWAGGER_URL,
-    API_URL,
-    config={  # Swagger UI config overrides
-        'app_name': "Computer Vision Azure API"
-    }
-)
-
-# Register Swagger UI blueprint at /apidocs
-app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
 @app.route("/")
 def home():
@@ -27,7 +11,7 @@ def home():
 def swagger_yaml():
     return app.send_static_file('swagger.yml')
 
-@app.route("/api/v1/analysis/", methods=['POST'])
+@app.route("/api/v1/analysis/", methods=['GET'])
 def analysis():
     try:
         get_json = request.get_json()
