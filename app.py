@@ -7,25 +7,23 @@ app = Flask(__name__, template_folder='templates')
 def home():
     return render_template('index.html')
 
+@app.route("/static/swagger.yml")  # Changed route to match API_URL
+def swagger_yaml():
+    return app.send_static_file('swagger.yml')
 
-# API at /api/v1/analysis/ 
 @app.route("/api/v1/analysis/", methods=['GET'])
 def analysis():
-    # Try to get the URI from the JSON
     try:
         get_json = request.get_json()
         image_uri = get_json['uri']
     except:
         return jsonify({'error': 'Missing URI in JSON'}), 400
-    
-    # Try to get the text from the image
+
     try:
         res = read_image(image_uri)
-        
         response_data = {
             "text": res
         }
-    
         return jsonify(response_data), 200
     except:
         return jsonify({'error': 'Error in processing'}), 500
